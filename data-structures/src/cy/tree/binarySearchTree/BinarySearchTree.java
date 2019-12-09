@@ -1,6 +1,7 @@
 package cy.tree.binarySearchTree;
 
-import java.util.Stack;
+import javax.sound.midi.Soundbank;
+import java.util.*;
 
 /**
  *  二分搜索树
@@ -94,7 +95,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     *  前序遍历
+     *  前序遍历（深度优先遍历）
      */
     public void proOrder(){
         proOrder(root);
@@ -112,7 +113,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
 
     /**
-     *  中序遍历
+     *  中序遍历（深度优先遍历）
      */
     public void inOrder(){
         inOrder(root);
@@ -129,7 +130,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     *  后序遍历
+     *  后序遍历（深度优先遍历）
      */
     public void postOrder(){
         postOrder(root);
@@ -146,7 +147,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
 
     /**
-     *  非递归前序遍历
+     *  非递归前序遍历（深度优先遍历）
      *  用栈来实现递归思路，从右孩子到左孩子依次开始入栈操作
      *               15(1)
      *             /      \
@@ -196,7 +197,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     *  非递归中序遍历
+     *  非递归中序遍历（深度优先遍历）
      *  用栈来实现递归思路
      *               15(6)
      *             /      \
@@ -244,6 +245,214 @@ public class BinarySearchTree<E extends Comparable<E>> {
             }
         }
 
+    }
+
+    /**
+     *  非递归后序遍历（深度优先遍历）
+     *  用栈来实现递归思路
+     *               15(9)
+     *             /      \
+     *           6(5)      23(8)
+     *         /   \       /   \
+     *       4(3)  7(4)  19(6)  71(7)
+     *      /   \
+     *    2(1)  5(2)
+     *  遍历输出顺序如图括号，结果为：2,5,4,7,6,19,71,23,15
+     *
+     *  循环1:入栈15，访问次数为1
+     *  循环2:入栈6，访问次数为1
+     *  循环3:入栈4，访问次数为1
+     *  循环4:入栈2，访问次数为1
+     *  循环5:取得栈顶2，访问次数为2
+     *  循环6:出栈2
+     *  循环7:取得栈顶4，访问次数为2
+     *  循环8:入栈5，访问次数为1
+     *  循环9:取得栈顶5，访问次数为2
+     *  循环10:出栈5
+     *  循环11:出栈4
+     *  循环12:取得栈顶6，访问次数为2
+     *  循环13:入栈7，访问次数为1
+     *  循环14:取得栈顶7，访问次数为2
+     *  循环15:出栈7
+     *  循环16:出栈6
+     *  循环17:取得栈顶15，访问次数为2
+     *  循环18:入栈23，访问次数为1
+     *  循环19:入栈19，访问次数为1
+     *  循环20:取得栈顶19，访问次数为2
+     *  循环21:出栈19
+     *  循环22:取得栈顶23，访问次数为2
+     *  循环23:入栈71，访问次数为1
+     *  循环24:取得栈顶71，访问次数为2
+     *  循环25:出栈71
+     *  循环26:出栈23
+     *  循环27:出栈15
+     **/
+    public void postOrderNR(){
+        if (root == null) {
+            return;
+        }
+        Node node = root;
+        Stack<Node> stack = new Stack<>();
+        // 用Map来存储访问次数
+        Map<E, Integer> map = new HashMap<>();
+        while (!stack.isEmpty() || node != null){
+            // 当左孩子为空
+            if(node != null){
+                stack.push(node);// 入栈
+                map.put(node.val, 1); // 访问次数为1
+                node = node.left; // 继续访问左孩子
+            }else{
+                node = stack.peek(); //取得栈顶
+                // 如果访问次数为2
+                if(map.get(node.val) == 2){
+                    stack.pop();// 取出栈顶
+                    System.out.println(node.val);// 执行数据
+                    node = null;// 赋值为空继续循环
+                }else{
+                    //如果访问次数不是2，将该节点访问次数改为2
+                    map.put(node.val, 2);
+                    // 继续访问右孩子
+                    node = node.right;
+                }
+            }
+        }
+    }
+
+    /**
+     *  层序遍历（广度优先遍历），非递归
+     *  用队列的实现
+     *               15(1)
+     *             /     \
+     *           6(2)    23(3)
+     *         /   \     /   \
+     *      4(4)  7(5) 19(6)  71(7)
+     *      /       \
+     *    2(8)      5(9)
+     *  遍历输出顺序如图括号，结果为：15,6,23,4,7,19,71,2,5
+     *
+     *  入队根15
+     *  循环1:出队15,入队6,入队23
+     *  循环2:出队6,入队4,入队7
+     *  循环3:出队23,入队19,入队71
+     *  循环4:出队4,入队2,入队5
+     *  循环5:出队7
+     *  循环6:出队19
+     *  循环7:出队71
+     *  循环8:出队2
+     *  循环9:出队5
+     */
+    public void levelOrder(){
+        // 用链表来实现队列
+        Queue<Node> queue = new LinkedList<>();
+        // 根节点入队
+        queue.add(root);
+        while (!queue.isEmpty()){
+            // 出队
+            Node curr = queue.remove();
+            System.out.println(curr.val);
+
+            // 有左孩子了入队
+            if (curr.left != null){
+                ((LinkedList<Node>) queue).add(curr.left);
+            }
+            // 有右孩子了入队
+            if (curr.right != null){
+                ((LinkedList<Node>) queue).add(curr.right);
+            }
+        }
+    }
+
+    /**
+     *  查询二叉树的最小元素，递归算法
+     */
+    public E getMinElement(){
+        if(size == 0){
+            throw  new IllegalArgumentException("BST is empty!");
+        }
+        Node getNode = getMinElement(root);
+        return getNode.val;
+    }
+
+    // 递归算法
+    private Node getMinElement(Node node){
+        // 因为最小节点一定在左孩子
+        if(node.left == null){
+            return node;
+        }
+        return getMinElement(node.left);
+    }
+
+    /**
+     *  查询二叉树的最大元素
+     */
+    public E getMaxElement(){
+        if(size == 0){
+            throw  new IllegalArgumentException("BST is empty!");
+        }
+        Node getNode = getMaxElement(root);
+        return getNode.val;
+    }
+
+    // 递归算法
+    private Node getMaxElement(Node node){
+        // 因为最大节点一定在右孩子
+        if(node.right == null){
+            return node;
+        }
+        return getMaxElement(node.right);
+    }
+
+    /**
+     *  删除最小值所在的节点,递归算法
+     */
+    public E removeMin(){
+        // 找到最小元素，为返回元素
+        E ret = getMinElement();
+        // 执行删除操作
+        root = removeMin(root);
+        return ret;
+    }
+
+    // 递归算法
+    private Node removeMin(Node node){
+        // 最小节点一定在左孩子
+        if(node.left == null){
+            // 取得节点右孩子
+            Node rightNode = node.right;
+            // 将右孩子为空
+            node.right = null;
+            size --;
+            return rightNode;
+        }
+        // 将又孩子给上层左孩子
+        node.left = removeMin(node.left);
+        return node;
+    }
+
+    /**
+     *  删除最大值所在的节点,递归算法
+     */
+    public E removeMax(){
+        // 找到最大元素，为返回元素
+        E ret = getMaxElement();
+        // 执行删除操作
+        root = removeMax(root);
+        return ret;
+    }
+
+    // 递归算法
+    private Node removeMax(Node node){
+        // 最大节点已经在右孩子
+        if(node.right == null){
+            // 取得左孩子节点
+            Node leftNode = node.left;
+            // 左孩子为空
+            node.left = null;
+            size --;
+            return leftNode;
+        }
+        node.right = removeMax(node.right);
+        return node;
     }
 
 
