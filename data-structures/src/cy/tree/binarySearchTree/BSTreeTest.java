@@ -1,5 +1,7 @@
 package cy.tree.binarySearchTree;
 
+import java.util.List;
+
 public class BSTreeTest {
 
     /**
@@ -14,7 +16,7 @@ public class BSTreeTest {
     public static void main(String[] args) {
 
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
-        int[] nums = {15,6,23,4,7,19,71,5};
+        int[] nums = {15,6,23,4,7,19,71,2,5};
         for(int num : nums){
             bst.add(num);
         }
@@ -34,7 +36,11 @@ public class BSTreeTest {
         // ∑«µ›πÈÀ„∑®≤„–Ú±È¿˙£∫15,6,23,4,7,19,71,2,5
 //        bst.levelOrder();
 
-        bst.removeMin();
-
+        List<Integer> preOrder = bst.preOrderTraveral();
+        StringBuilder sb = new StringBuilder();
+        for(Integer i: preOrder){
+            sb.append(i+",");
+        }
+        System.out.println(sb.toString());
     }
 }

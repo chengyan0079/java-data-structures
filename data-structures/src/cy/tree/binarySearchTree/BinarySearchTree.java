@@ -1,6 +1,7 @@
 package cy.tree.binarySearchTree;
 
 import javax.sound.midi.Soundbank;
+import javax.swing.tree.TreeNode;
 import java.util.*;
 
 /**
@@ -95,60 +96,67 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     *  前序遍历（深度优先遍历）
+     *  前序遍历，递归算法（深度优先遍历）
      */
-    public void proOrder(){
-        proOrder(root);
+    public List<E> proOrder(){
+        return proOrder(root);
     }
 
     // 递归算法 从左到右依次访问
-    private void proOrder(Node node){
+    private List<E> proOrder(Node node){
+        ArrayList<E> res = new ArrayList<>();
         if(node == null){
-            return;
+            return res;
         }
         System.out.println(node.val);
         proOrder(node.left);
         proOrder(node.right);
+        return res;
     }
 
 
     /**
-     *  中序遍历（深度优先遍历）
+     *  中序遍历，递归算法（深度优先遍历）
      */
-    public void inOrder(){
-        inOrder(root);
+    public List<E> inOrder(){
+        return inOrder(root);
     }
     // 递归算法 从左到右依次访问
-    private void inOrder(Node node){
+    private List<E> inOrder(Node node){
+        ArrayList<E> res = new ArrayList<>();
         if(node == null){
-            return;
+            return res;
         }
         inOrder(node.left);
         System.out.println(node.val);
         inOrder(node.right);
-
+        return res;
     }
 
     /**
-     *  后序遍历（深度优先遍历）
+     *  后序遍历，递归算法（深度优先遍历）
      */
-    public void postOrder(){
-        postOrder(root);
+    public List<E> postOrder(){
+        return postOrder(root);
     }
     // 递归算法 从左到右依次访问
-    private void postOrder(Node node){
+    private List<E> postOrder(Node node){
+        ArrayList<E> res = new ArrayList<>();
         if(node == null){
-            return;
+            return res;
         }
         postOrder(node.left);
         postOrder(node.right);
-        System.out.println(node.val);
+        res.add(node.val);
+        return res;
     }
 
 
     /**
      *  非递归前序遍历（深度优先遍历）
-     *  用栈来实现递归思路，从右孩子到左孩子依次开始入栈操作
+     *  用栈来实现递归思路
+     *  时间O(n)，空间O(n)
+     *
      *               15(1)
      *             /      \
      *           6(2)      23(7)
@@ -170,10 +178,11 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * 循环8：出栈19
      * 循环9：出栈71
      */
-    public void preOrderNR(){
+    public List<E> preOrderNR(){
 
+        ArrayList<E> res = new ArrayList<>();
         if(root == null){
-            return;
+            return res;
         }
 
         Stack<Node> stack = new Stack<>();
@@ -181,24 +190,26 @@ public class BinarySearchTree<E extends Comparable<E>> {
         stack.push(root);
         while(!stack.isEmpty()){
             //　出栈表示执行遍历操作
-            Node cur = stack.pop();
-            System.out.println(cur.val);
+            Node curr = stack.pop();
+            res.add(curr.val);
 
             // 右孩子非空 右孩子入栈
-            if(cur.right != null){
-                stack.push(cur.right);
+            if(curr.right != null){
+                stack.push(curr.right);
             }
             // 左孩子非空 左孩子入栈
-            if(cur.left != null){
-                stack.push(cur.left);
+            if(curr.left != null){
+                stack.push(curr.left);
             }
         }
-
+        return res;
     }
 
     /**
      *  非递归中序遍历（深度优先遍历）
      *  用栈来实现递归思路
+     *  时间O(n)，空间O(n)
+     *
      *               15(6)
      *             /      \
      *           6(4)      23(8)
@@ -228,28 +239,31 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * 循环17->入栈71
      * 循环18->出栈71
      */
-    public void inOrderNR() {
+    public List<E> inOrderNR() {
+        ArrayList<E> res = new ArrayList<>();
         if (root == null) {
-            return;
+            return res;
         }
-        Node p = root;
+        Node curr = root;
         Stack<Node> stack = new Stack<>();
-        while (!stack.isEmpty() || p != null) {
-            if(p != null) {
-                stack.push(p);
-                p = p.left;
-            }else if(!stack.isEmpty()) {
-                p = stack.pop(); //取出栈顶元素
-                System.out.println(p.val);
-                p = p.right; //访问右子树
+        while (!stack.isEmpty() || curr != null) {
+            if (curr != null) {
+                stack.push(curr);
+                curr = curr.left;
+            } else {
+                curr = stack.pop(); //取出栈顶元素
+                res.add(curr.val);
+                curr = curr.right; //访问右子树
             }
         }
-
+        return res;
     }
 
     /**
      *  非递归后序遍历（深度优先遍历）
      *  用栈来实现递归思路
+     *  时间O(n)，空间O(n)
+     *
      *               15(9)
      *             /      \
      *           6(5)      23(8)
@@ -287,40 +301,44 @@ public class BinarySearchTree<E extends Comparable<E>> {
      *  循环26:出栈23
      *  循环27:出栈15
      **/
-    public void postOrderNR(){
+    public List<E> postOrderNR(){
+        ArrayList<E> res = new ArrayList<>();
         if (root == null) {
-            return;
+            return res;
         }
-        Node node = root;
+        Node curr = root;
         Stack<Node> stack = new Stack<>();
         // 用Map来存储访问次数
         Map<E, Integer> map = new HashMap<>();
-        while (!stack.isEmpty() || node != null){
+        while (!stack.isEmpty() || curr != null){
             // 当左孩子为空
-            if(node != null){
-                stack.push(node);// 入栈
-                map.put(node.val, 1); // 访问次数为1
-                node = node.left; // 继续访问左孩子
+            if(curr != null){
+                stack.push(curr);// 入栈
+                map.put(curr.val, 1); // 访问次数为1
+                curr = curr.left; // 继续访问左孩子
             }else{
-                node = stack.peek(); //取得栈顶
+                curr = stack.peek(); //取得栈顶
                 // 如果访问次数为2
-                if(map.get(node.val) == 2){
+                if(map.get(curr.val) == 2){
                     stack.pop();// 取出栈顶
-                    System.out.println(node.val);// 执行数据
-                    node = null;// 赋值为空继续循环
+                    res.add(curr.val);// 执行数据
+                    curr = null;// 赋值为空继续循环
                 }else{
                     //如果访问次数不是2，将该节点访问次数改为2
-                    map.put(node.val, 2);
+                    map.put(curr.val, 2);
                     // 继续访问右孩子
-                    node = node.right;
+                    curr = curr.right;
                 }
             }
         }
+        return res;
     }
 
     /**
      *  层序遍历（广度优先遍历），非递归
      *  用队列的实现
+     *  时间O(n)，空间O(n)
+     *
      *               15(1)
      *             /     \
      *           6(2)    23(3)
@@ -341,7 +359,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
      *  循环8:出队2
      *  循环9:出队5
      */
-    public void levelOrder(){
+    public List<E> levelOrder(){
+        ArrayList<E> res = new ArrayList<>();
         // 用链表来实现队列
         Queue<Node> queue = new LinkedList<>();
         // 根节点入队
@@ -349,7 +368,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
         while (!queue.isEmpty()){
             // 出队
             Node curr = queue.remove();
-            System.out.println(curr.val);
+            res.add(curr.val);
 
             // 有左孩子了入队
             if (curr.left != null){
@@ -360,7 +379,172 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 ((LinkedList<Node>) queue).add(curr.right);
             }
         }
+        return res;
     }
+
+    /**
+     *  非递归中序遍历
+     *  时间O(n)，空间O(1)
+     */
+    public List<E> inOrderTraveral() {
+
+        ArrayList<E> res = new ArrayList<E>();
+        if(root == null) {
+            return res;
+        }
+        Node cur = root;
+        while(cur != null){
+            // 如果当前节点的左孩子为空，则输出当前节点，并将其右孩子作为当前节点。
+            if(cur.left == null){
+                res.add(cur.val);
+                cur = cur.right;
+            }
+            // 如果当前节点的左孩子不为空，在当前节点的左孩子中找到当前节点的前驱节点。
+            else{
+                // 取得当前节点的前驱节点
+                Node prev = cur.left;
+                while(prev.right != null && prev.right != cur){
+                    prev = prev.right;
+                }
+
+                //如果前驱节点的右孩子为空，将它的右孩子设置为当前节点。当前节点更新为当前节点的左孩子。
+                if(prev.right == null){
+                    prev.right = cur;
+                    cur = cur.left;
+                }
+                //如果前驱节点的右孩子为当前节点，将它的右孩子重新设为空（恢复树的形状）。输出当前节点。当前节点更新为当前节点的右孩子。
+                else{
+                    prev.right = null;
+                    res.add(cur.val);
+                    cur = cur.right;
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     *  非递归前序遍历
+     *  时间O(n)，空间O(1)
+     *
+     *  循环1，当前cur=15，前驱prev=7，放入list=15，更改prev.right=15，更改cur=6
+     * 循环2，当前cur=6，前驱prev=5，放入list=6，更改prev.right=6，更改cur=4
+     * 循环3，当前cur=4，前驱prev=2，放入list=4，更改prev.right=4，更改cur=2
+     * 循环4，当前cur=2，放入list=2，因为当前cur.right=4，更改当前cur=4
+     * 循环5，当前cur=4，因为当前右cur.right=5，更改当前cur=5
+     * 循环6，当前cur=5，放入list=5，因为当前右cur.right=6，更改当前cur=6
+     * 循环7，当前cur=6，因为当前右cur.right=7，更改当前cur=7
+     * 循环8，当前cur=7，放入list=7，因为当前右cur.right=15，更改当前cur=15
+     * 循环9，当前cur15，前驱prev=7，当前右cur.right=23，更改当前cur=23
+     * 循环10，当前cur23，前驱prev=19，放入list=23，更改prev.right=23，更改cur=19
+     * 循环11，当前cur19，放入list=19，因为当前右cur.right=23，更改当前cur=23
+     * 循环12，当前cur23，前驱prev=19，当前右cur.right=71，更改当前cur=71
+     * 循环13，当前cur71，放入list=71
+     */
+    public List<E> preOrderTraveral() {
+
+        ArrayList<E> res = new ArrayList<E>();
+        if(root == null) {
+            return res;
+        }
+        Node cur = root;
+        while(cur != null){
+            // 如果当前节点的左孩子为空，则输出当前节点，并将其右孩子作为当前节点。
+            if(cur.left == null){
+                res.add(cur.val);
+                cur = cur.right;
+            }
+            // 如果当前节点的左孩子不为空，在当前节点的左孩子中找到当前节点的前驱节点。
+            else{
+                // 取得当前节点的前驱节点
+                Node prev = cur.left;
+                while(prev.right != null && prev.right != cur){
+                    prev = prev.right;
+                }
+
+                //如果前驱节点的右孩子为空，输出当前节点。将它的右孩子设置为当前节点。当前节点更新为当前节点的左孩子。
+                if(prev.right == null){
+                    res.add(cur.val);
+                    prev.right = cur;
+                    cur = cur.left;
+                }
+                //如果前驱节点的右孩子为当前节点，将它的右孩子重新设为空（恢复树的形状）。当前节点更新为当前节点的右孩子。
+                else{
+                    prev.right = null;
+                    cur = cur.right;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     *  非递归后序遍历
+     *  时间O(n)，空间O(1)
+     */
+    public List<E> postorderTraversal() {
+
+        ArrayList<E> res = new ArrayList<E>();
+        if(root == null) {
+            return res;
+        }
+        // 虚拟节点，root为虚拟节点的左孩子
+        Integer i = -1;
+        Node dummyRoot = new Node((E) i);
+        dummyRoot.left = root;
+
+        Node cur = dummyRoot;// 当前节点为虚拟节点的整个二叉树
+        while(cur != null){
+            // 如果当前节点的左孩子为空，则将其右孩子作为当前节点。
+            if(cur.left == null){
+                cur = cur.right;
+            }
+            // 如果当前节点的左孩子不为空，在当前节点的左子树中找到当前节点的前驱节点。
+            else{
+                // 取得当前节点的前驱节点
+                Node pre = cur.left;
+                while(pre.right != null && pre.right != cur){
+                    pre = pre.right;
+                }
+                // 如果前驱节点的右孩子为空，将它的右孩子设置为当前节点。当前节点更新为当前节点的左孩子。
+                if(pre.right == null){
+                    pre.right = cur;
+                    cur = cur.left;
+                }
+                //如果前驱节点的右孩子为当前节点，将它的右孩子重新设为空。
+                // 倒序输出从当前节点的左孩子到该前驱节点这条路径上的所有节点。当前节点更新为当前节点的右孩子。
+                else{
+                    pre.right = null;
+                    reverseTraversal(cur.left, res);
+                    cur = cur.right;
+                }
+            }
+        }
+        return res;
+    }
+
+    // 倒叙遍历
+    private void reverseTraversal(Node node, ArrayList<E> res){
+        int start = res.size();
+        while(node != null){
+            res.add(node.val);
+            node = node.right;
+        }
+
+        int i = start;
+        int j = res.size() - 1;
+        while(i < j){
+            E t = res.get(i);
+            res.set(i, res.get(j));
+            res.set(j, t);
+
+            i ++;
+            j --;
+        }
+    }
+
+
 
     /**
      *  查询二叉树的最小元素，递归算法
@@ -455,6 +639,66 @@ public class BinarySearchTree<E extends Comparable<E>> {
         return node;
     }
 
+    /**
+     *  删除任意元素
+     */
+    public void remove(E e){
+        root = remove(root, e);
+    }
+
+    // 递归算法
+    private Node remove(Node node, E e){
+        if(node == null){
+            return null;
+        }
+        if(e.compareTo(node.val) > 0){
+            node.right = remove(node.right, e);
+            return node;
+        }else if(e.compareTo(node.val) < 0){
+            node.left = remove(node.left, e);
+            return node;
+        }else{
+            // e.compareTo(node.val) == 0
+            if(node.left == null){
+                // 取得节点右孩子
+                Node rightNode = node.right;
+                // 将右孩子为空
+                node.right = null;
+                size --;
+                return rightNode;
+            }
+            if(node.right == null){
+                // 取得左孩子节点
+                Node leftNode = node.left;
+                // 左孩子为空
+                node.left = null;
+                size --;
+                return leftNode;
+            }
+
+            // 如果左右孩子都不为空的情况，下列思路二选一
+            // （1）找到比待删除节点大的最小节点，也就是右孩子的最小节点，用此节点来顶替待删除节点位置
+            // （2）找到比待删除节点小的最大节点，也就是左孩子的最大节点，用此节点来顶替待删除节点位置
+
+            // 第（1）种思路，找到比待删除节点的右孩子的最小节点
+            Node successor = getMinElement(node.right);// 后继节点
+            //删除右孩子最小节点，用此节点来顶替待删除节点位置
+            successor.right = removeMin(node.right);// 这里已经进行删除操作，size--，不用再维护size
+            successor.left = node.left;
+            node.left = null;
+            node.right = null;
+            return successor;
+
+//            // 第（2）种思路，找到比待删除节点的左孩子的最大节点
+//            Node predecessor = getMaxElement(node.left);// 前驱节点
+//            //删除左孩子的最大节点，用此节点来顶替待删除节点位置
+//            predecessor.left = removeMax(node.left);// 这里已经进行删除操作，size--，不用再维护size
+//            predecessor.right = node.right;
+//            node.left = null;
+//            node.right = null;
+//            return predecessor;
+        }
+    }
 
     @Override
     public String toString(){
