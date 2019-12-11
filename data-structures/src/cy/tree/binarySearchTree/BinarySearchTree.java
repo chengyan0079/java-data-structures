@@ -547,8 +547,6 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
     }
 
-
-
     /**
      *  查询二叉树的最小元素，递归算法
      */
