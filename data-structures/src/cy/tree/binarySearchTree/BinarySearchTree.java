@@ -1,7 +1,5 @@
 package cy.tree.binarySearchTree;
 
-import javax.sound.midi.Soundbank;
-import javax.swing.tree.TreeNode;
 import java.util.*;
 
 /**
@@ -385,10 +383,12 @@ public class BinarySearchTree<E extends Comparable<E>> {
     /**
      *  非递归中序遍历
      *  时间O(n)，空间O(1)
+     *
+     *  仅与非递归前序遍历输出位置不同，其他均相同
      */
     public List<E> inOrderTraveral() {
 
-        ArrayList<E> res = new ArrayList<E>();
+        ArrayList<E> res = new ArrayList<>();
         if(root == null) {
             return res;
         }
@@ -475,18 +475,19 @@ public class BinarySearchTree<E extends Comparable<E>> {
                 }
             }
         }
-
         return res;
     }
 
     /**
      *  非递归后序遍历
      *  时间O(n)，空间O(1)
+     *
+     *  仅与非递归前序遍历输出位置不同，插入数组倒序排列
      */
     public List<E> postorderTraversal() {
 
         ArrayList<E> res = new ArrayList<E>();
-        if(root == null) {
+        if (root == null) {
             return res;
         }
         // 虚拟节点，root为虚拟节点的左孩子
@@ -495,27 +496,28 @@ public class BinarySearchTree<E extends Comparable<E>> {
         dummyRoot.left = root;
 
         Node cur = dummyRoot;// 当前节点为虚拟节点的整个二叉树
-        while(cur != null){
+        while (cur != null) {
             // 如果当前节点的左孩子为空，则将其右孩子作为当前节点。
-            if(cur.left == null){
+            if (cur.left == null) {
                 cur = cur.right;
             }
             // 如果当前节点的左孩子不为空，在当前节点的左子树中找到当前节点的前驱节点。
-            else{
+            else {
                 // 取得当前节点的前驱节点
                 Node pre = cur.left;
-                while(pre.right != null && pre.right != cur){
+                while (pre.right != null && pre.right != cur) {
                     pre = pre.right;
                 }
                 // 如果前驱节点的右孩子为空，将它的右孩子设置为当前节点。当前节点更新为当前节点的左孩子。
-                if(pre.right == null){
+                if (pre.right == null) {
                     pre.right = cur;
                     cur = cur.left;
                 }
                 //如果前驱节点的右孩子为当前节点，将它的右孩子重新设为空。
                 // 倒序输出从当前节点的左孩子到该前驱节点这条路径上的所有节点。当前节点更新为当前节点的右孩子。
-                else{
+                else {
                     pre.right = null;
+                    // 插入返回的数组里（倒序）
                     reverseTraversal(cur.left, res);
                     cur = cur.right;
                 }
@@ -524,7 +526,9 @@ public class BinarySearchTree<E extends Comparable<E>> {
         return res;
     }
 
-    // 倒叙遍历
+    /**
+     *  加入数组倒序排列
+      */
     private void reverseTraversal(Node node, ArrayList<E> res){
         int start = res.size();
         while(node != null){
@@ -534,11 +538,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
         int i = start;
         int j = res.size() - 1;
+        // 将上述插入顺序进行倒序
         while(i < j){
-            E t = res.get(i);
             res.set(i, res.get(j));
-            res.set(j, t);
-
+            res.set(j, res.get(i));
             i ++;
             j --;
         }

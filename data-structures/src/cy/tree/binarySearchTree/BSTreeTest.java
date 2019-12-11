@@ -36,7 +36,7 @@ public class BSTreeTest {
         // ·Çµİ¹éËã·¨²ãĞò±éÀú£º15,6,23,4,7,19,71,2,5
 //        bst.levelOrder();
 
-        List<Integer> preOrder = bst.preOrderTraveral();
+        List<Integer> preOrder = bst.postorderTraversal();
         StringBuilder sb = new StringBuilder();
         for(Integer i: preOrder){
             sb.append(i+",");
