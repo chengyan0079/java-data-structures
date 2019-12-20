@@ -229,6 +229,19 @@ public class Array<E> {
     }
 
     /**
+     *  交换两个索引位置
+     */
+    public void swap(int i, int j){
+
+        if(i < 0 || i >= size || j < 0 || j >= size) {
+            throw new IllegalArgumentException("Index is illegal.");
+        }
+        E t = data[i];
+        data[i] = data[j];
+        data[j] = t;
+    }
+
+    /**
      * 字符串
      */
     @Override
