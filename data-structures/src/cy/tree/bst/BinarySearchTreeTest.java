@@ -1,8 +1,8 @@
-package cy.tree.binarySearchTree;
+package cy.tree.bst;
 
 import java.util.List;
 
-public class BSTreeTest {
+public class BinarySearchTreeTest {
 
     /**
      *               15

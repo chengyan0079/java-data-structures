@@ -1,4 +1,4 @@
-package cy.tree.binarySearchTree;
+package cy.tree.bst;
 
 import java.util.*;
 
